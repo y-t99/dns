@@ -1,0 +1,2 @@
+# dns
+dns learning note
