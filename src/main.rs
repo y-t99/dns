@@ -27,7 +27,7 @@ impl DNSPacketBuffer {
 
 
     /// Read a single byte and move the position one step forward
-    fn read(&mut self) -> Result<u8, &str> {
+    fn read(&mut self) -> Result<u8, String> {
         if self.pos >= 512 {
             return Err("End of buffer".into());
         }
@@ -38,7 +38,7 @@ impl DNSPacketBuffer {
     }
 
     /// Get a single byte, without changing the buffer position
-    fn get(&mut self, pos: usize) -> Result<u8, &str> {
+    fn get(&mut self, pos: usize) -> Result<u8, String> {
         if pos >= 512 {
             return Err("End of buffer".into());
         }
@@ -46,7 +46,7 @@ impl DNSPacketBuffer {
     }
 
     /// Get a range of bytes
-    fn get_range(&mut self, start: usize, len: usize) -> Result<&[u8], &str> {
+    fn get_range(&mut self, start: usize, len: usize) -> Result<&[u8], String> {
         let end = match start.checked_add(len) {
             None => return Err("End of buffer".into()),
             Some(result) => {
@@ -60,14 +60,14 @@ impl DNSPacketBuffer {
     }
 
     /// Read two bytes, stepping two steps forward
-    fn read_u16(&mut self) -> Result<u16, &str> {
+    fn read_u16(&mut self) -> Result<u16, String> {
         let res = ((self.read()? as u16) << 8) | (self.read()? as u16);
 
         Ok(res)
     }
 
     /// Read four bytes, stepping four steps forward
-    fn read_u32(&mut self) -> Result<u32, &str> {
+    fn read_u32(&mut self) -> Result<u32, String> {
         let res = ((self.read()? as u32) << 24)
             | ((self.read()? as u32) << 16)
             | ((self.read()? as u32) << 8)
@@ -75,7 +75,6 @@ impl DNSPacketBuffer {
 
         Ok(res)
     }
-
 
 }
 
