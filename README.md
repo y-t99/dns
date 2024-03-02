@@ -1,2 +1,10 @@
 # dns
-dns learning note
+
+## Thanks
+
+1. [DNSGuide](https://github.com/EmilHernvall/dnsguide)
+
+## Protocol
+
+Conventionally, DNS packets are sent using UDP transport and are limited to 512 bytes. 
+DNS is quite convenient in the sense that queries and responses use the same format. 
