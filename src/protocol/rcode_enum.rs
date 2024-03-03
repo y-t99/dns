@@ -1,4 +1,5 @@
 #[derive(Copy, Debug, PartialEq, Eq)]
+#[repr(u32)]
 pub enum RCode {
     /*
         No error condition
