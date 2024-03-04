@@ -40,12 +40,12 @@ pub struct DnsRecord {
     */
     pub r_class: ResourceClass,
     /**
-        a 32 bit unsigned integer that specifies the time
-        interval (in seconds) that the resource record may be
-        cached before it should be discarded.  Zero values are
-        interpreted to mean that the RR can only be used for the
-        transaction in progress, and should not be cached.
-     */
+       a 32 bit unsigned integer that specifies the time
+       interval (in seconds) that the resource record may be
+       cached before it should be discarded.  Zero values are
+       interpreted to mean that the RR can only be used for the
+       transaction in progress, and should not be cached.
+    */
     pub ttl: u16,
     /**
         an unsigned 16 bit integer that specifies the length in

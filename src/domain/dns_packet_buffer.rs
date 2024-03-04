@@ -25,7 +25,6 @@ impl DnsPacketBuffer {
         self.pos = pos;
     }
 
-
     /// Read a single byte and move the position one step forward
     fn read(&mut self) -> Result<u8, &'static str> {
         if self.pos >= 512 {
