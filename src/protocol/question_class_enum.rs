@@ -4,6 +4,6 @@ use crate::protocol::resource_class_enum::ResourceClass;
 #[repr(u16)]
 pub enum QuestionClass {
     Base(ResourceClass),
-    // any class
+    /// any class
     All = 255u16,
 }
