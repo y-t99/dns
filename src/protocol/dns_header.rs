@@ -2,20 +2,22 @@ use crate::protocol::opcode_enum::OpCode;
 use crate::protocol::rcode_enum::RCode;
 
 /**
-          0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
-        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-        |                      ID                       |
-        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-        |QR|   Opcode  |AA|TC|RD|RA|   Z    |   RCODE   |
-        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-        |                    QDCOUNT                    |
-        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-        |                    ANCOUNT                    |
-        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-        |                    NSCOUNT                    |
-        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-        |                    ARCOUNT                    |
-        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+```
+  0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  5
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                      ID                       |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|QR|   Opcode  |AA|TC|RD|RA|   Z    |   RCODE   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    QDCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    ANCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    NSCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+|                    ARCOUNT                    |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+```
 */
 #[derive(Clone, Debug)]
 pub struct DnsHeader {
@@ -31,13 +33,13 @@ pub struct DnsHeader {
         A one bit field that specifies whether this message is a
         query (0), or a response (1).
      */
-    pub response: bool,             // 1 bit
+    pub response: bool, // 1 bit
     /**
         A four bit field that specifies kind of query in this
         message.  This value is set by the originator of a query
         and copied into the response.  The values are:
      */
-    pub opcode: OpCode,                 // 4 bits
+    pub opcode: OpCode, // 4 bits
     /**
         Authoritative Answer - this bit is valid in responses,
         and specifies that the responding name server is an
@@ -80,7 +82,7 @@ pub struct DnsHeader {
         responses.  The values have the following
         interpretation:
      */
-    pub rcode: RCode,       // 4 bits
+    pub r_code: RCode,       // 4 bits
 
 
     /**
@@ -107,4 +109,28 @@ pub struct DnsHeader {
         resource records in the additional records section.
      */
     pub resource_entries: u16,      // 16 bits
+}
+
+impl DnsHeader {
+    pub fn new() -> DnsHeader {
+        DnsHeader {
+            id: 0,
+
+            response: false,
+            opcode: OpCode::Query,
+            authoritative_answer: false,
+            truncated_message: false,
+            recursion_desired: false,
+            recursion_available: false,
+            z: false,
+            checking_disabled: false,
+            authed_data: false,
+            r_code: RCode::NoError,
+
+            questions: 0,
+            answers: 0,
+            authoritative_entries: 0,
+            resource_entries: 0,
+        }
+    }
 }
