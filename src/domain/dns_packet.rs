@@ -43,16 +43,16 @@ impl DnsPacket {
     pub fn decode(buffer: &mut DnsPacketBuffer) -> Result<DnsPacket, &'static str> {
         let header = Self::decode_header(buffer).unwrap();
 
-        let questions = ![];
+        let questions = Vec::new();
         for _ in 0..header.questions {}
 
-        let answers = ![];
+        let answers = Vec::new();
         for _ in 0..header.answers {}
 
-        let authorities = ![];
+        let authorities = Vec::new();
         for _ in 0..header.authoritative_entries {}
 
-        let resources = ![];
+        let resources = Vec::new();
         for _ in 0..header.resource_entries {}
 
         Ok(DnsPacket {
