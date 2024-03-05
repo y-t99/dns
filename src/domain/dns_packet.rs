@@ -40,7 +40,7 @@ impl DnsPacket {
         }
     }
 
-    fn decode_header(buffer: &mut DnsPacketBuffer) -> Result<DnsHeader, &'static str>  {
+    fn decode_header(buffer: &mut DnsPacketBuffer) -> Result<DnsHeader, &'static str> {
         let id = buffer.read_u16()?;
 
         let flags = buffer.read_u16()?;

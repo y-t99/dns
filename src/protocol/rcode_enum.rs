@@ -41,7 +41,6 @@ pub enum RCode {
     Refused = 5u8,
 }
 
-
 impl TryFrom<u8> for RCode {
     type Error = &'static str;
 

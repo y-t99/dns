@@ -19,7 +19,6 @@ pub enum OpCode {
     Status = 2u8,
 }
 
-
 impl TryFrom<u8> for OpCode {
     type Error = &'static str;
 
