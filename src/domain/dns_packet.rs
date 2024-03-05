@@ -40,6 +40,30 @@ impl DnsPacket {
         }
     }
 
+    pub fn decode(buffer: &mut DnsPacketBuffer) -> Result<DnsPacket, &'static str> {
+        let header = Self::decode_header(buffer).unwrap();
+
+        let questions = ![];
+        for _ in 0..header.questions {}
+
+        let answers = ![];
+        for _ in 0..header.answers {}
+
+        let authorities = ![];
+        for _ in 0..header.authoritative_entries {}
+
+        let resources = ![];
+        for _ in 0..header.resource_entries {}
+
+        Ok(DnsPacket {
+            header,
+            questions,
+            answers,
+            authorities,
+            resources,
+        })
+    }
+
     fn decode_header(buffer: &mut DnsPacketBuffer) -> Result<DnsHeader, &'static str> {
         let id = buffer.read_u16()?;
 
@@ -83,5 +107,40 @@ impl DnsPacket {
             authoritative_entries,
             resource_entries,
         })
+    }
+
+    /**
+        Name space definitions
+
+        Domain names in messages are expressed in terms of a sequence of labels.
+        Each label is represented as a one octet length field followed by that
+        number of octets.  Since every domain name ends with the null label of
+        the root, a domain name is terminated by a length byte of zero.  The
+        high order two bits of every length octet must be zero, and the
+        remaining six bits of the length field limit the label to 63 octets or
+        less. => **sequence limit 1 byte & labels limit 63 bytes**
+
+        To simplify implementations, the total length of a domain name (i.e.,
+        label octets and label length octets) is restricted to 255 octets or
+        less. => **sequences plus labels limit 255 bytes**
+
+        Although labels can contain any 8 bit values in octets that make up a
+        label, it is strongly recommended that labels follow the preferred
+        syntax described elsewhere in this memo, which is compatible with
+        existing host naming conventions. Name servers and resolvers must
+        compare labels in a case-insensitive manner (i.e., A=a), assuming ASCII
+        with zero parity. Non-alphabetic codes must match exactly.
+
+        The tricky part: Reading domain names, taking labels into consideration.
+        Will take something like [3]www[6]google[3]com[0] and append
+        www.google.com
+    */
+    fn decode_name(buffer: &mut DnsPacketBuffer) -> Result<String, &'static str> {
+        // todo: DNS Domain Name Processing Algorithm
+        Ok(String::new())
+    }
+
+    fn decode_record(_: &mut DnsPacketBuffer) -> Result<DnsRecord, &'static str> {
+        Ok(DnsRecord::new())
     }
 }

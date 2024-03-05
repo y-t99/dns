@@ -61,3 +61,16 @@ pub struct DnsRecord {
     */
     pub r_data: String,
 }
+
+impl DnsRecord {
+    pub fn new() -> DnsRecord {
+        DnsRecord {
+            name: String::new(),
+            r_type: ResourceType::A,
+            r_class: ResourceClass::IN,
+            ttl: 0,
+            rd_length: 0,
+            r_data: String::new(),
+        }
+    }
+}
