@@ -1,2 +1,2 @@
-mod dns_packet;
-mod dns_packet_buffer;
+pub mod dns_packet;
+pub mod dns_packet_buffer;

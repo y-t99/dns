@@ -1,4 +1,4 @@
-struct DnsPacketBuffer {
+pub struct DnsPacketBuffer {
     pub buf: [u8; 512],
     pub pos: usize,
 }
@@ -11,22 +11,22 @@ impl DnsPacketBuffer {
         }
     }
 
-    fn pos(&self) -> usize {
+    pub fn pos(&self) -> usize {
         self.pos
     }
 
     /// Step the buffer position forward a specific number of steps
-    fn step(&mut self, steps: usize) -> () {
+    pub fn step(&mut self, steps: usize) -> () {
         self.pos += steps;
     }
 
     /// Change the buffer position
-    fn seek(&mut self, pos: usize) -> () {
+    pub fn seek(&mut self, pos: usize) -> () {
         self.pos = pos;
     }
 
     /// Read a single byte and move the position one step forward
-    fn read(&mut self) -> Result<u8, &'static str> {
+    pub fn read(&mut self) -> Result<u8, &'static str> {
         if self.pos >= 512 {
             return Err("End of buffer");
         }
@@ -37,7 +37,7 @@ impl DnsPacketBuffer {
     }
 
     /// Get a single byte, without changing the buffer position
-    fn get(&mut self, pos: usize) -> Result<u8, &'static str> {
+    pub fn get(&mut self, pos: usize) -> Result<u8, &'static str> {
         if pos >= 512 {
             return Err("End of buffer");
         }
@@ -45,7 +45,7 @@ impl DnsPacketBuffer {
     }
 
     /// Get a range of bytes
-    fn get_range(&mut self, start: usize, len: usize) -> Result<&[u8], &'static str> {
+    pub fn get_range(&mut self, start: usize, len: usize) -> Result<&[u8], &'static str> {
         let end = match start.checked_add(len) {
             None => return Err("End of buffer"),
             Some(result) => {
@@ -59,14 +59,14 @@ impl DnsPacketBuffer {
     }
 
     /// Read two bytes, stepping two steps forward
-    fn read_u16(&mut self) -> Result<u16, &'static str> {
+    pub fn read_u16(&mut self) -> Result<u16, &'static str> {
         let res = ((self.read()? as u16) << 8) | (self.read()? as u16);
 
         Ok(res)
     }
 
     /// Read four bytes, stepping four steps forward
-    fn read_u32(&mut self) -> Result<u32, &'static str> {
+    pub fn read_u32(&mut self) -> Result<u32, &'static str> {
         let res = ((self.read()? as u32) << 24)
             | ((self.read()? as u32) << 16)
             | ((self.read()? as u32) << 8)
