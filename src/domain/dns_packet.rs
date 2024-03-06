@@ -171,7 +171,7 @@ impl DnsPacket {
                 }
 
                 let l = buffer.get(pos + 1)? as u16;
-                let h = (len as u16) ^ 0xC0 << 8;
+                let h = ((len as u16) ^ 0xC0) << 8;
                 let offset = h | l;
                 pos = offset as usize;
 
