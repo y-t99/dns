@@ -134,10 +134,71 @@ impl DnsPacket {
         The tricky part: Reading domain names, taking labels into consideration.
         Will take something like [3]www[6]google[3]com[0] and append
         www.google.com
+
+        In order to reduce the size of messages, the domain system utilizes a
+        compression scheme which eliminates the repetition of domain names in a
+        message. In this scheme, an entire domain name or a list of labels at
+        the end of a domain name is replaced with a pointer to a prior occurance
+        of the same name.
     */
     fn decode_name(buffer: &mut DnsPacketBuffer) -> Result<String, &'static str> {
-        // todo: DNS Domain Name Processing Algorithm
-        Ok(String::new())
+        let mut domain_name = String::new();
+
+        let mut pos = buffer.pos();
+
+        let mut jumped = false;
+        let max_jumps = 5;
+        let mut jumps_performed = 0;
+
+        let mut delimiter = "";
+
+        loop {
+            let len = buffer.get(pos)?;
+
+            /*
+            The pointer takes the form of a two octet sequence:
+                +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+                | 1  1|                OFFSET                   |
+                +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+             */
+            if (len & 0xC0) == 0xC0 {
+                if jumps_performed > max_jumps {
+                    return Err("Limit of {} jumps exceeded");
+                }
+
+                if !jumped {
+                    buffer.seek(pos + 2)?;
+                }
+
+                let l = buffer.get(pos + 1)? as u16;
+                let h = (len as u16) ^ 0xC0 << 8;
+                let offset = h | l;
+                pos = offset as usize;
+
+                jumped = true;
+                jumps_performed += 1;
+
+                continue;
+            } else {
+                pos += 1;
+
+                if len == 0 {
+                    break;
+                }
+
+                domain_name.push_str(delimiter);
+
+                delimiter = ".";
+
+                pos += len as usize;
+            }
+        }
+
+        if !jumped {
+            buffer.seek(pos)?;
+        }
+
+        Ok(domain_name)
     }
 
     fn decode_record(_: &mut DnsPacketBuffer) -> Result<DnsRecord, &'static str> {

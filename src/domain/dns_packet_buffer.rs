@@ -16,13 +16,25 @@ impl DnsPacketBuffer {
     }
 
     /// Step the buffer position forward a specific number of steps
-    pub fn step(&mut self, steps: usize) -> () {
+    pub fn step(&mut self, steps: usize) -> Result<(), &'static str> {
+        if self.pos + steps >= 512 {
+            return Err("End of buffer");
+        }
+
         self.pos += steps;
+
+        Ok(())
     }
 
     /// Change the buffer position
-    pub fn seek(&mut self, pos: usize) -> () {
+    pub fn seek(&mut self, pos: usize) -> Result<(), &'static str> {
+        if self.pos >= 512 {
+            return Err("End of buffer");
+        }
+
         self.pos = pos;
+
+        Ok(())
     }
 
     /// Read a single byte and move the position one step forward
