@@ -1,5 +1,3 @@
-use crate::protocol::opcode_enum::OpCode;
-
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[repr(u16)]
 pub enum ResourceType {
