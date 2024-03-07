@@ -3,6 +3,8 @@ use crate::protocol::dns_header::DnsHeader;
 use crate::protocol::dns_question::DnsQuestion;
 use crate::protocol::dns_resource_record::DnsRecord;
 use crate::protocol::opcode_enum::OpCode;
+use crate::protocol::question_class_enum::QuestionClass;
+use crate::protocol::question_type_enum::QuestionType;
 use crate::protocol::rcode_enum::RCode;
 
 /**
@@ -43,8 +45,11 @@ impl DnsPacket {
     pub fn decode(buffer: &mut DnsPacketBuffer) -> Result<DnsPacket, &'static str> {
         let header = Self::decode_header(buffer).unwrap();
 
-        let questions = Vec::new();
-        for _ in 0..header.questions {}
+        let mut questions = Vec::new();
+        for _ in 0..header.questions {
+            let question = Self::decode_question(buffer)?;
+            questions.push(question);
+        }
 
         let answers = Vec::new();
         for _ in 0..header.answers {}
@@ -199,6 +204,17 @@ impl DnsPacket {
         }
 
         Ok(domain_name)
+    }
+
+    fn decode_question(buffer: &mut DnsPacketBuffer) -> Result<DnsQuestion, &'static str> {
+        let name = Self::decode_name(buffer)?;
+        let q_type: QuestionType = buffer.read_u16()?.try_into()?;
+        let q_class: QuestionClass = buffer.read_u16()?.try_into()?;
+        Ok(DnsQuestion {
+            name,
+            q_type,
+            q_class,
+        })
     }
 
     fn decode_record(_: &mut DnsPacketBuffer) -> Result<DnsRecord, &'static str> {
