@@ -6,6 +6,8 @@ use crate::protocol::opcode_enum::OpCode;
 use crate::protocol::question_class_enum::QuestionClass;
 use crate::protocol::question_type_enum::QuestionType;
 use crate::protocol::rcode_enum::RCode;
+use crate::protocol::resource_class_enum::ResourceClass;
+use crate::protocol::resource_type_enum::ResourceType;
 
 /**
 ```
@@ -51,14 +53,23 @@ impl DnsPacket {
             questions.push(question);
         }
 
-        let answers = Vec::new();
-        for _ in 0..header.answers {}
+        let mut answers = Vec::new();
+        for _ in 0..header.answers {
+            let answer = Self::decode_record(buffer)?;
+            answers.push(answer);
+        }
 
-        let authorities = Vec::new();
-        for _ in 0..header.authoritative_entries {}
+        let mut authorities = Vec::new();
+        for _ in 0..header.authoritative_entries {
+            let authority = Self::decode_record(buffer)?;
+            authorities.push(authority);
+        }
 
-        let resources = Vec::new();
-        for _ in 0..header.resource_entries {}
+        let mut resources = Vec::new();
+        for _ in 0..header.resource_entries {
+            let resource = Self::decode_record(buffer)?;
+            resources.push(resource);
+        }
 
         Ok(DnsPacket {
             header,
@@ -193,6 +204,9 @@ impl DnsPacket {
 
                 domain_name.push_str(delimiter);
 
+                let str_buffer = buffer.get_range(pos, len as usize)?;
+                domain_name.push_str(&String::from_utf8_lossy(str_buffer).to_lowercase());
+
                 delimiter = ".";
 
                 pos += len as usize;
@@ -217,7 +231,26 @@ impl DnsPacket {
         })
     }
 
-    fn decode_record(_: &mut DnsPacketBuffer) -> Result<DnsRecord, &'static str> {
-        Ok(DnsRecord::new())
+    fn decode_record(buffer: &mut DnsPacketBuffer) -> Result<DnsRecord, &'static str> {
+        let domain = Self::decode_name(buffer)?;
+
+        let resource_type: ResourceType = buffer.read_u16()?.try_into()?;
+        let resource_class: ResourceClass = buffer.read_u16()?.try_into()?;
+
+        let ttl = buffer.read_u32()?;
+        let rd_length = buffer.read_u16()?;
+
+        let str_buffer = buffer.get_range(buffer.pos(), rd_length as usize)?;
+        let r_data = String::from_utf8_lossy(str_buffer).to_string();
+        buffer.step(rd_length as usize)?;
+
+        Ok(DnsRecord {
+            name: domain,
+            r_type: resource_type,
+            r_class: resource_class,
+            ttl,
+            rd_length,
+            r_data,
+        })
     }
 }

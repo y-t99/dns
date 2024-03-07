@@ -46,7 +46,7 @@ pub struct DnsRecord {
        interpreted to mean that the RR can only be used for the
        transaction in progress, and should not be cached.
     */
-    pub ttl: u16,
+    pub ttl: u32,
     /**
         an unsigned 16 bit integer that specifies the length in
         octets of the RDATA field.

@@ -1,5 +1,3 @@
-use crate::protocol::rcode_enum::RCode;
-
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 #[repr(u8)]
 pub enum OpCode {
