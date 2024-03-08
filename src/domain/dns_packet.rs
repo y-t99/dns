@@ -45,7 +45,7 @@ impl DnsPacket {
     }
 
     pub fn decode(buffer: &mut DnsPacketBuffer) -> Result<DnsPacket, &'static str> {
-        let header = Self::decode_header(buffer).unwrap();
+        let header = Self::decode_header(buffer)?;
 
         let mut questions = Vec::new();
         for _ in 0..header.questions {
